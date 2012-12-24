@@ -1,6 +1,6 @@
 import unittest
 
-from thistle.graph import DirectedGraph, generate_adjlist, write_adjlist, read_adjlist
+from thistle.graph import DirectedGraph, adjacency_data, adjacency_graph
 
 
 class TestDirectedGraph(unittest.TestCase):
@@ -9,8 +9,8 @@ class TestDirectedGraph(unittest.TestCase):
         g = DirectedGraph()
         edges = [(1, 0), (2, 0), (3, 1), (4, 1), (5, 2), (6, 1), (7, 0), (8, 0), (9, 8)]
         for u, v in edges:
-            g.add_node(u)
-            g.add_node(v)
+            g.add_node(u, title=u)
+            g.add_node(v, title=v)
             g.add_edge(u, v)
 
         self.g = g
@@ -53,22 +53,38 @@ class TestReadWriteGraph(unittest.TestCase):
                  (7, 6), (8, 1), (8, 2), (9, 8),
                  (9, 2), (9, 4)]
         for u, v in edges:
+            g.add_node(u, title=u)
+            g.add_node(v, title=v)
             g.add_edge(u, v)
 
         self.g = g
 
-    def test_generate_adjlist(self):
-        expected = ['0 3 4 5 6', '1 8', '2 8 1 4 6 0', '3 1 2 6 7 8 9', '4 3',
-                    '6 1 9', '7 0 1 2 4 5 6', '8 1 2', '9 8 2 4']
-        self.assertEqual(list(generate_adjlist(self.g)), expected)
+    def test_adjacency_data(self):
+        expected = {'adjacency': [[3L, 4L, 5L, 6L],
+                                  [8L],
+                                  [8L, 1L, 4L, 6L, 0L],
+                                  [1L, 2L, 6L, 7L, 8L, 9L],
+                                  [3L],
+                                  [],
+                                  [1L, 9L],
+                                  [0L, 1L, 2L, 4L, 5L, 6L],
+                                  [1L, 2L],
+                                  [8L, 2L, 4L]],
+                    'nodes': [{'id': 0, 'title': 0},
+                              {'id': 1, 'title': 1},
+                              {'id': 2, 'title': 2},
+                              {'id': 3, 'title': 3},
+                              {'id': 4, 'title': 4},
+                              {'id': 5, 'title': 5},
+                              {'id': 6, 'title': 6},
+                              {'id': 7, 'title': 7},
+                              {'id': 8, 'title': 8},
+                              {'id': 9, 'title': 9}]}
 
-    def test_read_write_adjlist(self):
-        fname = 'test.adjlist'
-        write_adjlist(self.g, fname)
-        graph = read_adjlist(fname)
+        actual = adjacency_data(self.g)
+        self.assertEqual(actual, expected)
+
+    def test_adjacency_graph(self):
+        data = adjacency_data(self.g)
+        graph = adjacency_graph(data)
         self.assertEqual(graph, self.g)
-
-
-def teardown_module(module):
-    import os
-    os.remove('test.adjlist')

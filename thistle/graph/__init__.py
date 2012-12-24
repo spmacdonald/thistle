@@ -2,7 +2,6 @@
 # application.
 
 from array import array
-from collections import defaultdict
 
 
 class Graph(object):
@@ -27,8 +26,8 @@ class DirectedGraph(Graph):
 
     def __init__(self):
         self.node = {}
-        self.pred = defaultdict(lambda: array('I'))
-        self.succ = defaultdict(lambda: array('I'))
+        self.pred = {}
+        self.succ = {}
 
     def __eq__(self, other):
         return self.node == other.node and self.pred == other.pred and self.succ == other.succ
@@ -41,6 +40,14 @@ class DirectedGraph(Graph):
         # Do not allow loops.
         if u == v:
             return
+
+        if u not in self.succ:
+            self.succ[u] = array('I')
+            self.pred[u] = array('I')
+
+        if v not in self.succ:
+            self.succ[v] = array('I')
+            self.pred[v] = array('I')
 
         if v not in self.succ[u]:
             self.succ[u].append(v)
@@ -55,26 +62,32 @@ class DirectedGraph(Graph):
         return list(self.succ[n])
 
 
-def generate_adjlist(graph):
-    for s in graph.succ:
-        line = '{0} {1}'.format(s, ' '.join(map(str, graph.successors(s))))
-        yield line
+def adjacency_data(graph):
+
+    data = {}
+    data['nodes'] = []
+    data['adjacency'] = []
+
+    for n in graph.succ:
+        data['nodes'].append(dict(id=n, **graph.node[n]))
+        data['adjacency'].append(graph.successors(n))
+
+    return data
 
 
-def write_adjlist(graph, fname):
-    with open(fname, 'w') as fh:
-        for line in generate_adjlist(graph):
-            line += '\n'
-            fh.write(line)
+def adjacency_graph(data):
 
-
-def read_adjlist(fname):
     graph = DirectedGraph()
 
-    with open(fname, 'r') as fh:
-        for line in fh:
-            values = map(int, line.strip().split(' '))
-            for v in values[1:]:
-                graph.add_edge(values[0], v)
+    mapping = []
+    for d in data['nodes']:
+        n_id = d.pop('id')
+        mapping.append(n_id)
+        graph.add_node(n_id, **d)
+
+    for i, d in enumerate(data['adjacency']):
+        source = mapping[i]
+        for target in d:
+            graph.add_edge(source, target)
 
     return graph
