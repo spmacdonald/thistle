@@ -1,6 +1,7 @@
 # Follows NetworkX closely.  Stripped down for speed and specialized for my
 # application.
 
+from itertools import count
 from array import array
 
 
@@ -51,6 +52,12 @@ class DirectedGraph(Graph):
         if u not in self.pred[v]:
             self.pred[v].append(u)
 
+    def edges(self):
+        nodes_nbrs = self.succ.items()
+        for n, nbrs in nodes_nbrs:
+            for nbr in nbrs:
+                yield n, nbr
+
     def predecessors(self, n):
         return list(self.pred[n])
 
@@ -65,6 +72,10 @@ class DirectedGraph(Graph):
         for u in self.succ[n]:
             graph.node[u] = self.node[u]
             graph.add_edge(n, u)
+
+        for v in self.pred[n]:
+            graph.node[v] = self.node[v]
+            graph.add_edge(v, n)
 
         return graph
 
@@ -98,3 +109,13 @@ def adjacency_graph(data):
             graph.add_edge(source, target)
 
     return graph
+
+
+def node_link_data(graph):
+
+    mapping = dict(zip(graph, count()))
+    data = {}
+    data['nodes'] = [dict(id=n, **graph.node[n]) for n in graph]
+    data['links'] = [dict(source=mapping[u], target=mapping[v]) for u, v in graph.edges()]
+
+    return data

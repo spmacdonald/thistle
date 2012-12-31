@@ -1,6 +1,6 @@
 import unittest
 
-from thistle.graph import DirectedGraph, adjacency_data, adjacency_graph
+from thistle.graph import DirectedGraph, adjacency_data, adjacency_graph, node_link_data
 
 
 class TestDirectedGraph(unittest.TestCase):
@@ -97,3 +97,49 @@ class TestReadWriteGraph(unittest.TestCase):
         data = adjacency_data(self.g)
         graph = adjacency_graph(data)
         self.assertEqual(graph, self.g)
+
+    def test_node_link_data(self):
+        expected = {'links':
+                    [{'source': 0, 'target': 3},
+                     {'source': 0, 'target': 4},
+                     {'source': 0, 'target': 5},
+                     {'source': 0, 'target': 6},
+                     {'source': 1, 'target': 8},
+                     {'source': 2, 'target': 8},
+                     {'source': 2, 'target': 1},
+                     {'source': 2, 'target': 4},
+                     {'source': 2, 'target': 6},
+                     {'source': 2, 'target': 0},
+                     {'source': 3, 'target': 1},
+                     {'source': 3, 'target': 2},
+                     {'source': 3, 'target': 6},
+                     {'source': 3, 'target': 7},
+                     {'source': 3, 'target': 8},
+                     {'source': 3, 'target': 9},
+                     {'source': 4, 'target': 3},
+                     {'source': 6, 'target': 1},
+                     {'source': 6, 'target': 9},
+                     {'source': 7, 'target': 0},
+                     {'source': 7, 'target': 1},
+                     {'source': 7, 'target': 2},
+                     {'source': 7, 'target': 4},
+                     {'source': 7, 'target': 5},
+                     {'source': 7, 'target': 6},
+                     {'source': 8, 'target': 1},
+                     {'source': 8, 'target': 2},
+                     {'source': 9, 'target': 8},
+                     {'source': 9, 'target': 2},
+                     {'source': 9, 'target': 4}],
+                    'nodes': [{'id': 0, 'title': 0},
+                              {'id': 1, 'title': 1},
+                              {'id': 2, 'title': 2},
+                              {'id': 3, 'title': 3},
+                              {'id': 4, 'title': 4},
+                              {'id': 5, 'title': 5},
+                              {'id': 6, 'title': 6},
+                              {'id': 7, 'title': 7},
+                              {'id': 8, 'title': 8},
+                              {'id': 9, 'title': 9}]}
+
+        actual = node_link_data(self.g)
+        self.assertEqual(actual, expected)
