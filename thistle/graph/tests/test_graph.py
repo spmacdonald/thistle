@@ -27,7 +27,9 @@ class TestDirectedGraph(unittest.TestCase):
         g.add_edge(1, 1)
         g.add_edge(2, 0)
         self.assertEqual(g.predecessors(0), [2])
-        self.assertEqual(g.predecessors(1), [0])
+        self.assertEqual(g.successors(0), [1])
+        self.assertEqual(g.predecessors(1), [0, 1])
+        self.assertEqual(g.successors(1), [1])
 
     def test_iter(self):
         self.assertEqual(list(self.g), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -38,6 +40,13 @@ class TestDirectedGraph(unittest.TestCase):
         self.assertEqual(self.g.predecessors(2), [5])
         self.assertEqual(self.g.predecessors(3), [])
         self.assertEqual(self.g.predecessors(8), [9])
+
+    def test_successors(self):
+        self.assertEqual(self.g.successors(0), [])
+        self.assertEqual(self.g.successors(1), [0])
+        self.assertEqual(self.g.successors(2), [0])
+        self.assertEqual(self.g.successors(3), [1])
+        self.assertEqual(self.g.successors(8), [0])
 
 
 class TestReadWriteGraph(unittest.TestCase):

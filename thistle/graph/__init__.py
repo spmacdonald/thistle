@@ -37,10 +37,6 @@ class DirectedGraph(Graph):
         self.node[n] = attr
 
     def add_edge(self, u, v):
-        # Do not allow loops.
-        if u == v:
-            return
-
         if u not in self.succ:
             self.succ[u] = array('I')
             self.pred[u] = array('I')
@@ -60,6 +56,17 @@ class DirectedGraph(Graph):
 
     def successors(self, n):
         return list(self.succ[n])
+
+    def extract_edges(self, n):
+        graph = self.__class__()
+
+        graph.node[n] = self.node[n]
+
+        for u in self.succ[n]:
+            graph.node[u] = self.node[u]
+            graph.add_edge(n, u)
+
+        return graph
 
 
 def adjacency_data(graph):
