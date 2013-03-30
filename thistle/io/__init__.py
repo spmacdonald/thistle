@@ -26,6 +26,7 @@ class WikipediaPage(object):
     LINKS = r'\[\[(.*?)\]\]'
     STUB = r'\-stub\}\}'
     DISAMB = r'\{\{disambig\}\}'
+    SPECIAL_PREFIXES = set(('Wikipedia', 'MediaWiki', 'File', 'Portal', 'Template', 'Category', 'Help'))
 
     def __init__(self, page, namespace):
         self.page = page
@@ -53,7 +54,8 @@ class WikipediaPage(object):
 
     @property
     def special(self):
-        if self.title.startswith('Wikipedia:'):
+        fields = self.title.split(':')
+        if len(fields) > 0 and fields[0] in self.SPECIAL_PREFIXES:
             return True
         return False
 

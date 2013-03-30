@@ -80,39 +80,7 @@ class DirectedGraph(Graph):
         return graph
 
 
-def adjacency_data(graph):
-
-    data = {}
-    data['nodes'] = []
-    data['adjacency'] = []
-
-    for n in graph.succ:
-        data['nodes'].append(dict(id=n, **graph.node[n]))
-        data['adjacency'].append(graph.successors(n))
-
-    return data
-
-
-def adjacency_graph(data):
-
-    graph = DirectedGraph()
-
-    mapping = []
-    for d in data['nodes']:
-        n_id = d.pop('id')
-        mapping.append(n_id)
-        graph.add_node(n_id, **d)
-
-    for i, d in enumerate(data['adjacency']):
-        source = mapping[i]
-        for target in d:
-            graph.add_edge(source, target)
-
-    return graph
-
-
 def node_link_data(graph):
-
     mapping = dict(zip(graph, count()))
     data = {}
     data['nodes'] = [dict(id=n, **graph.node[n]) for n in graph]
